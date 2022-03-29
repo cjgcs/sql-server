@@ -1,0 +1,32 @@
+exec sp_helpconstraint student
+
+//请利用alter table命令去掉Student中的主键约束
+alter table student drop PK_student
+
+//请利用alter table命令给Student中增加新列：班长，数据类型：char(9)，允许空；
+alter table student ADD 班长 char(9) null
+
+//请利用alter table命令，给Student设置“sno”为主键，并命名该约束条件为pk_sno；
+alter table student add constraint pk_sno primary key(sno) 
+//alter table 表名 add constraint 主键名 primary key (column1,column2,....,column)
+
+//请利用alter table命令，给Student设置“班长”为外键，并命名该约束条件为fk_班长
+alter table student add constraint fk_班长 foreign key(班长) references student(sno)
+
+//请利用alter table命令给Student中的Sage列增加一个约束条件：要求其取值范围在15-40之间，并命名该约束条件为check_sage。
+alter table student add constraint check_sage check(sage>=15 and sage<=40)
+
+exec sp_helpconstraint P
+
+//使用SQL语句CREATE INDEX为关系SPJ在“qty”属性列上创建一个普通索引，命名为SPJ_ qty。
+create  index SPJ_qty on SPJ(qty) 
+
+//使用SQL语句CREATE INDEX为关系P在“pno”属性列上创建一个聚簇索引，命名为J_ pno。
+create cluster index J_pno on P(pno)
+
+
+使用SQL语句CREATE INDEX为关系P在“pno”属性列上创建一个聚簇索引，命名为J_ pno。
+create clustered index J_pno on P(pno)
+
+
+
