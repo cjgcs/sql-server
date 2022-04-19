@@ -1,0 +1,39 @@
+（1）查询各系的男女生学生人数
+	select sdept,count(*) 人数 from student group by sdept
+（2）查询各个学生的个人总分和平均分
+	select sno,sum(grade) '个人总分',avg(grade) '平均分' from sc group by sno
+（3）查询平均分在85分以上的学生学号。
+	select sno,avg(grade) '平均分' from sc group by sno having avg(grade)>=85
+
+
+（1）查询Grade在80~90范围内的学生的Sno、Sname、Grade。
+	select student.sno,sname,grade from student,sc where grade>=80 and grade<=90
+（2）查询选修’信息系统’课程的学生的Sno、Sname、Grade。
+	select cno from course where cname='信息系统'
+	select student.sno,sname,grade from student,sc where student.sno=sc.sno and sc.cno=3
+（3）查询信息系学生的选课情况
+	select student.*,sc.* from student,sc where student.sdept='CS'
+（4）查询所有学生的成绩，要求列出Sno、sname、grade，没有选修课程的学生的成绩（grade）为空。提示：使用左外连接。
+	select student.sno,sname,grade from student left outer join sc on(student.sno=sc.sno)
+（5）查询所有课程的选修情况，要求列出Cno、选修人数，Course表中没有学生选课的课程列值为空。提示： 使用右外连接。
+	select sc.cno,count(*) '选修人数' from sc right outer join course on(course.cno=sc.cno)
+	select cno,count(sno) '选修人数' from sc group by cno
+	select course.cno,sno from sc right outer join course on(course.cno=sc.cno)
+（6）查询没有不及格课程的学生姓名
+	select distinct sname from student,sc where sc.grade>60 and student.sno=sc.sno
+	
+
+
+（1）查找与“刘晨”性别相同的所有学生的Sname、Sage。
+	select ssex from student where sname='刘晨'
+	select sname,sage from student where ssex in(select ssex from student where sname='刘晨')
+（2）查找选修了2号或者3号课程的学生的Sno、Sname、Ssex。
+	select distinct sno from sc where cno=2 or cno=3
+	select sno,sname,ssex from student where sno in(select distinct sno from sc where cno=2 or cno=3)
+
+
+and sc.cno=3
+and sc.cno=2 
+	select distinct sname from student,sc where student.sno=sc.sno and(sc.cno=1)
+
+
