@@ -1,0 +1,57 @@
+（1）查找与“刘晨”性别相同的所有学生的Sname、Sage。
+select sname,sage from student where ssex in(select ssex from student where sname='刘晨')
+
+（2）查找选修了2号或者3号课程的学生的Sno、Sname、Ssex。
+select sno,sname,ssex from student where sno in(select distinct sno from sc where cno=2 or cno=3)
+
+（3）列出Sno为201215121的学生，且Grade比201215122号的学生的最低成绩高的Cno和Grade。
+Select cno,grade from sc where sno='201215121'  and  grade>(select min(grade) from sc where sno='201215122')
+
+（4）查询选修课总学分在10学分以下的学生姓名
+
+select sname,sum(ccredit) '总学分' from sc,course,student where course.cno=sc.cno and student.sno=sc.sno group by student.sname having sum(ccredit)<10
+
+（5）查询选修了数据库并且成绩比李勇高的所有学生的姓名和成绩
+select cno from course where cname='数据库'
+选择了数据库的学生成绩
+select grade from sc where cno=(select cno from course where cname='数据库') and sno=(select sno from student where sname='李勇')
+select student.sno from student where sname='李勇' and grade=(select grade from sc where cno=(select cno from course where cname='数据库'))
+
+select sname,grade from student,sc where student.sno=sc.sno and sname<>'李勇' and grade>92
+select sname,grade from student,sc where student.sno=sc.sno and sname<>'李勇' and grade>(select grade from sc where cno=(select cno from course where cname='数据库') and sno=(select sno from student where sname='李勇')) 
+2．使用UNION查询选修了课程1或者选修了课程2的学生。
+select sno from sc where cno='1' union select sno from sc where cno='2'
+
+
+（1）使用SQL语句INSERT INTO...VALUES向学生-课程选课数据库的SC表插入数据：
+数据一：Sno为201215125，Cno为4，grade为85。
+insert into sc values('201215125',4,85) 
+数据二：Sno为201215123，Cno为5，grade为85。
+insert into sc values('201215123',5,85)
+（2）使用SQL语句DELETE删除SC表中Sno为201215125的成绩记录。
+delete from sc where sno='201215125'
+（3）使用SQL语句DELETE删除SC表中“信息系统”课程所有成绩记录。
+delete from sc where cno=(select cno from course where cname='信息系统')
+（4）使用SQL语句UPDATE修改SC表中Sno为 201215123 、Cno为 5 的grade为90。
+update sc set grade=90 where sno='201215123' and cno=5
+（5）使用SQL语句UPDATE修改SC表中“CS”系同学的“数据库”课程成绩上调5分。
+update sc set grade=grade+5 where sno=(select sno from student where sno=(select sno from student where sdept='CS' and sno=(select sno from sc where cno='1'))) and cno='1'
+（6）在学生-课程数据库中，以student表为基础，建立名为v_stu_i的视图，使视图显示全体学生的Sno、Sname、Ssex。
+create view v_stu_i as select sno,sname,ssex from student
+（7）在学生-课程数据库中，使用SQL语句CREATE VIEW建立一个名为v_stu_c的视图，要求包含2012级学生的Sno、Sname、所学课程的Cno，并利用该视图查询Sno为201215123的学生情况。
+create view v_stu_c as select student.sno,sname,cno from student,sc where student.sno=sc.sno and student.sno like '2012_____'
+select * from v_stu_c where sno='201215123'
+（8）基于student表、Course表和SC表，建立一个名为v_stu_g的视图，视图中具有所有学生的Sno、Sname、Cname、grade。并使用视图v_stu_g查询Sno为201215121的学生的所有课程与成绩。
+create view v_stu_g as select student.sno,sname,cname,grade from student,course,sc where student.sno=sc.sno and course.cno=sc.cno
+select distinct cname,grade from v_stu_g where sno='201215121'
+（9）基于student表、Course表和SC表，建立一个名为stu_tongji的视图，视图中具有所有学生的Sno、Sname，所有课程的总分，平均分，最高分和最低分。
+create view stu_tongji as select student.sno,sname,sum(grade) '总分',avg(grade) '平均分',max(grade) '最高分',min(grade) '最低分' from student ,course,sc where student.sno=sc.sno group by student.sno,student.sname
+（10）利用视图v_stu_i为student表添加一行数据：Sno为201215126、Sname为陈婷、Ssex为女。
+insert into v_stu_i values('201215126','陈婷','女')
+（11）利用视图v_stu_i删除Sno为201215126的学生记录。
+delete from v_stu_i where sno='201215126'
+（12）利用视图v_stu_g修改Sname为刘晨的数学的grade为94。
+update v_stu_g set grade=94 where sname='刘晨' and cname='数学'
+（13）使用SQL语句DROP VIEW删除视图v_stu_c和v_stu_g。
+drop view v_stu_c
+drop view v_stu_g
